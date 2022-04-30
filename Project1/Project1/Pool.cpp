@@ -30,14 +30,56 @@ bool PoolManager::Initialize()
     result = ParseBoxes();
     result = ParseContainers();
 
+    InitializeDecreaseBoxIndexes();
+
     return result;
 }
 
-std::vector<int> PoolManager::GetIndexesSortDecreaseBoxes()
+void PoolManager::InitializeDecreaseBoxIndexes()
 {
+    std::sort(m_Boxes.begin(), m_Boxes.end(), [](Box& box1, Box& box2)
+    {
+        return box1.GetSizeX() > box2.GetSizeX();
+    });
 
+    for (int i = 0; i < m_Boxes.size(); i++)
+    {
+        m_DescreaseBoxIndexes.push_back(m_Boxes.at(i).GetIndex());
+    }
+}
 
-    return std::vector<int>();
+const Box& PoolManager::GetBoxByIndex(int boxIndex)
+{
+    const auto founded = std::find_if(m_Boxes.cbegin(), m_Boxes.cend(),
+        [&boxIndex](const Box& box)
+    {
+        return box.GetIndex() == boxIndex;
+    }
+    );
+
+    if (founded == m_Boxes.end())
+    {
+        assert("Don't found box");
+    }
+
+    return *founded;
+}
+
+const Container& PoolManager::GetContainerByIndex(int containerIndex)
+{
+    const auto founded = std::find_if(m_Containers.cbegin(), m_Containers.cend(),
+        [&containerIndex](const Container& container)
+    {
+        return container.GetIndex() == containerIndex;
+    }
+    );
+
+    if (founded == m_Containers.end())
+    {
+        assert("Don't found box");
+    }
+
+    return *founded;
 }
 
 bool PoolManager::ParseBoxes()

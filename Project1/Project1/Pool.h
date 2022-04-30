@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <vector>
 #include <Box.h>
 #include <Container.h>
 
@@ -16,7 +17,11 @@ public:
 	int GetBoxNumber() const { return m_Boxes.size(); }
 	int GetContainerNumber() const { return m_Containers.size(); }
 
-	std::vector<int> GetIndexesSortDecreaseBoxes();
+	const std::vector<int>& GetIndexesSortDecreaseBoxes() { return m_DescreaseBoxIndexes; };
+	void InitializeDecreaseBoxIndexes();
+
+	const Box& GetBoxByIndex(int boxIndex);
+		const Container& GetContainerByIndex(int containerIndex);
 
 private:
 	static PoolManager* m_PoolManager;
@@ -28,6 +33,7 @@ private:
 	bool ParseBoxes();
 	bool ParseContainers();
 
-	std::list<Box> m_Boxes;
-	std::list<Container> m_Containers;
+	std::vector<int> m_DescreaseBoxIndexes;
+	std::vector<Box> m_Boxes;
+	std::vector<Container> m_Containers;
 };

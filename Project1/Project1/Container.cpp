@@ -2,9 +2,9 @@
 
 Container::Container(nlohmann::json containerInfo)
 {
-    index = containerInfo["index"];
+    m_Index = containerInfo["index"];
 
-    m_SizeX = containerInfo["size"]["x"];
-    m_SizeY = containerInfo["size"]["y"];
-    m_SizeZ = containerInfo["size"]["z"];
+    m_LenghtX = containerInfo["size"]["x"];
+    m_WidthY = containerInfo["size"]["y"];
+    m_HeightZ = containerInfo["size"]["z"];
 }

@@ -10,12 +10,9 @@ public:
 	GeneticAlgorithm();
 	~GeneticAlgorithm();
 
-	void PreInitialization();
-
 	void Start();
 
 private:
-	void Initialization();
 	void Evaluation();
 	void Selection();
 	void CrossoverAndMutation();

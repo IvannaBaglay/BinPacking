@@ -5,8 +5,16 @@ class Box
 {
 public:
 	Box() = default;
+	Box(int x, int y, int z, int index);
+
 	Box(const nlohmann::json& boxInfo);
 	~Box() = default;
+
+	int GetSizeX() const { return m_SizeX; }
+	int GetSizeY() const { return m_SizeY; }
+	int GetSizeZ() const { return m_SizeZ; }
+
+	int GetIndex() const { return m_Index; }
 
 private:
 	void Initialize();
@@ -14,6 +22,6 @@ private:
 	int m_SizeY;
 	int m_SizeZ;
 
-	int index;
+	int m_Index;
 
 };

@@ -17,7 +17,7 @@ int main()
     // preinitialize genetic algorithm
     GeneticAlgorithm gAlgorithm;
 
-
+    gAlgorithm.Start();
 
 
     return 0;

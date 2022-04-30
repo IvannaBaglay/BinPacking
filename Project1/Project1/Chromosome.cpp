@@ -18,6 +18,11 @@ Chromosome::Chromosome()
 void Chromosome::PreInitialize()
 {
     // S1 initialize box in decrease order
+    
+    const std::vector<int>& decreasedBoxesIndex = PoolManager::GetInstance()->GetIndexesSortDecreaseBoxes();
+
+    std::copy(decreasedBoxesIndex.begin(), decreasedBoxesIndex.end(), std::back_inserter(m_S1));
+
     // S2 initialize containers in random order
     int containerNumber = PoolManager::GetInstance()->GetContainerNumber();
     for (int i = 0; i < containerNumber; i++)

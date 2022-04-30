@@ -1,6 +1,8 @@
 #include <GeneticAlgorithm.h>
 #include <Constants.h>
 #include <Pool.h>
+#include <HeuristicAlgorithm.h>
+
 #include <iterator>
 
 GeneticAlgorithm::GeneticAlgorithm()
@@ -14,21 +16,19 @@ GeneticAlgorithm::~GeneticAlgorithm()
 {
 }
 
-inline void GeneticAlgorithm::PreInitialization()
+void GeneticAlgorithm::Start()
 {
+    for (const auto& individual : m_Individuals)
+    {
+        HeuristicAlgorithm hAlgorith(individual.GetBPS(), individual.GetCLS());
 
-}
-
-inline void GeneticAlgorithm::Start()
-{
-}
-
-inline void GeneticAlgorithm::Initialization()
-{
+        hAlgorith.Start();
+    }
 }
 
 inline void GeneticAlgorithm::Evaluation()
 {
+
 }
 
 inline void GeneticAlgorithm::Selection()
