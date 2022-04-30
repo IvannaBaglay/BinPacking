@@ -145,17 +145,21 @@
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Chromosome.cpp" />
     <ClCompile Include="Container.cpp" />
+    <ClCompile Include="GeneticAlgorithm.cpp" />
     <ClCompile Include="HeuristicAlgorithm.cpp" />
     <ClCompile Include="Individual.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Pool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Box.h" />
     <ClInclude Include="Chromosome.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Container.h" />
+    <ClInclude Include="GeneticAlgorithm.h" />
     <ClInclude Include="HeuristicAlgorithm.h" />
     <ClInclude Include="Individual.h" />
+    <ClInclude Include="Pool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

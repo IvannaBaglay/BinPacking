@@ -2,11 +2,15 @@
 #include <Chromosome.h>
 #include <memory>
 
+class PoolManager;
+
 class Individual
 {
 public:
-	Individual();
-	~Individual();
+	Individual() = default;
+	~Individual() = default;
+
+	void PreInitialization();
 
 	Individual Mate(Individual parent2);
 
@@ -14,7 +18,7 @@ public:
 private:
 	float CalculateFitness();
 
-	std::unique_ptr<Chromosome> m_Chromosome;
+	Chromosome m_Chromosome;
 	float m_Fitness;
 
 };

@@ -1,12 +1,13 @@
-#pragma once
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
-int GENERATIONS = 100;
-int POPULATION = 100;
-int POP_E = 10;
-float PROB_C = 0.75;
-float PROB_T = 0.85;
-float P_M = 0.01; // 
-int K_B = 3; //
-int K_E = 3; // 
+const int GENERATIONS = 100;
+const int POPULATION = 100;
+const int POP_E = 10;
+const float PROB_C = 0.75;
+const float PROB_T = 0.85;
+const float P_M = 0.01; // 
+const int K_B = 3; //
+const int K_E = 3; // 
 
-
+#endif
