@@ -36,7 +36,7 @@ private:
 
 	void UpdateBPS(int boxIndex);
 
-	PlacementSelection MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelection, const Container& emptySpace);
+	PlacementSelection MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelection);
 
 	void CopyEmptySpacesFromContainer(std::vector<Container>& emptySpaces, int containerIndex);
 

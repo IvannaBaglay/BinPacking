@@ -47,7 +47,7 @@ void HeuristicAlgorithm::Start()
 		{
 			//Let EMS by empty maximal spaces in c
 
-			std::vector<Container> emptyMaximalSpace; // TODO: Added copy function 
+			std::vector<Container> emptyMaximalSpace;
 			CopyEmptySpacesFromContainer(emptyMaximalSpace, container);
 
 
@@ -77,7 +77,7 @@ void HeuristicAlgorithm::Start()
 				if (!placementSelection.empty()) // P.size() = 0
 				{
 					// Make the placement indicted by P1
-					PlacementSelection placement =  MakePlacementsIndicted(placementSelection, emptyMaximalSpace.at(j));
+					PlacementSelection placement =  MakePlacementsIndicted(placementSelection);
 					//Update EMSs
 					UpdateEMS(emptyMaximalSpace, placement, container);
 					UpdateBPS(placement.index);
@@ -117,7 +117,7 @@ void HeuristicAlgorithm::Start()
 			if (!placementSelection.empty()) // P.size() = 0
 			{
 				// Make the placement indicted by P1
-				PlacementSelection placement = MakePlacementsIndicted(placementSelection, GetContainer(firstContainerIndex));
+				PlacementSelection placement = MakePlacementsIndicted(placementSelection);
 				//Update EMS // One container that was empty
 
 				std::vector<Container> emptyMaximalSpace;
@@ -136,15 +136,13 @@ void HeuristicAlgorithm::Start()
 	//return Packing Solution; ?????
 }
 
-PlacementSelection HeuristicAlgorithm::MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelecion, const Container& emptySpace)
+PlacementSelection HeuristicAlgorithm::MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelecion)
 {
 	// Sort by size of EMS that is placementsSelectionSize
 
-	int emptySpaceSizeX = emptySpace.GetLenghtX();
-
-	std::sort(placementsSelecion.begin(), placementsSelecion.end(), [&emptySpaceSizeX](const PlacementSelection& placementSelecion1, const PlacementSelection& placementSelecion2)
+	std::sort(placementsSelecion.begin(), placementsSelecion.end(), [](const PlacementSelection& placementSelecion1, const PlacementSelection& placementSelecion2)
 	{
-		return emptySpaceSizeX - placementSelecion1.size.lenght_x < emptySpaceSizeX < placementSelecion2.coordination.x;
+		return placementSelecion1.coordination.x < placementSelecion2.coordination.x;
 	});
 
 	return *placementsSelecion.begin();
