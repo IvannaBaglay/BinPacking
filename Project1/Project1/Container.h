@@ -6,6 +6,7 @@ class Container
 public:
 	Container() = default;
 	Container(nlohmann::json containerInfo);
+	Container(int sizeX, int sizeY, int sizeZ, int x, int y, int z);
 	~Container() = default;
 
 	int GetLenghtX() const { return m_LenghtX; }
@@ -17,8 +18,13 @@ public:
 	int GetZ() const { return m_Z; }
 
 	int GetIndex() const { return m_Index; }
+
+	const std::vector<Container>& GetEMS() const {	return m_EmptySpaces; }
+	void SetEMS(const std::vector<Container>& newEMS);
 private:
 	void Initialize();
+
+	std::vector<Container> m_EmptySpaces;
 
 	int m_LenghtX = 0;
 	int m_WidthY = 0;
@@ -29,4 +35,6 @@ private:
 	int m_Z = 0;
 
 	int m_Index = 0;
+
+
 };

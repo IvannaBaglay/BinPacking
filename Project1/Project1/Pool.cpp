@@ -74,12 +74,29 @@ const Container& PoolManager::GetContainerByIndex(int containerIndex)
     }
     );
 
-    if (founded == m_Containers.end())
+    if (founded == m_Containers.cend())
     {
         assert("Don't found box");
     }
 
     return *founded;
+}
+
+void PoolManager::UpdateContainerEMS(std::vector<Container>& emptySpaces, int containerIndex)
+{
+    auto founded = std::find_if(m_Containers.begin(), m_Containers.end(),
+        [&containerIndex](const Container& container)
+    {
+        return container.GetIndex() == containerIndex;
+    }
+    );
+
+    if (founded == m_Containers.end())
+    {
+        assert("Don't found box");
+    }
+
+    founded->SetEMS(emptySpaces);
 }
 
 bool PoolManager::ParseBoxes()

@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <vector>
+#include <queue>
 
 class Box;
 class Container;
@@ -14,8 +15,8 @@ public:
 	~HeuristicAlgorithm() = default;
 
 	void Start();
-	void MakePlacementsIndicted();
-	void UpdateEMS(std::vector<Container>& emptySpaces);
+
+
 
 private:
 	std::list<Box> CreateAllBoxOrientation(int boxIndex);
@@ -28,6 +29,13 @@ private:
 
 	std::vector<int> DifferentceVectors(const std::vector<int>& firstVector, const std::vector<int>& secondVector);
 	std::vector<int> DifferentceVectors(const std::vector<int>& firstVector, const Container& container);
+
+	void UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
+	void UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement);
+	void CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement);
+	void UpdateContainer(std::vector<Container>& emptySpaces, int containerIndex);
+
+	PlacementSelection MakePlacementsIndicted(std::queue<PlacementSelection>& placementsSelection);
 
 	std::vector<int> m_BPS;
 	std::vector<int> m_CLS;

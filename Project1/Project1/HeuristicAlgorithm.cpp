@@ -21,6 +21,8 @@ struct PlacementSelection
 		int y;
 		int z;
 	} coordination;
+
+	float placementsScore = 0.f;
 };
 
 HeuristicAlgorithm::HeuristicAlgorithm(const std::vector<int>& bps, const std::vector<int>& cls)
@@ -34,7 +36,7 @@ void HeuristicAlgorithm::Start()
 	//Let OC be the list of Opened Containers 
 	//int OC = 0;
 	std::vector<int> openedContainers; // is empty on the first iteration
-	std::vector<Container> emptyMaximalSpace; // free space be like as a small containers in one large// Maybe Box and Containers can be one class or inharitanced from one // Before start algorithm it is an empty
+	//std::vector<Container> emptyMaximalSpace; // free space be like as a small containers in one large// Maybe Box and Containers can be one class or inharitanced from one // Before start algorithm it is an empty
 	while (!m_BPS.empty())
 	{
 		// Let P be a be a priority queue of candidate placements with the priority defined in section (Placement selection)
@@ -44,6 +46,9 @@ void HeuristicAlgorithm::Start()
 		for (auto& container : openedContainers)
 		{
 			//Let EMS by empty maximal spaces in c
+
+			std::vector<Container> emptyMaximalSpace(GetContainer(container).GetEMS());
+
 			int j = 0; // мабуть краще починати з 0 // in orifinal j = 1
 			while (j <= emptyMaximalSpace.size() and boxplaced == false)
 			{
@@ -70,9 +75,9 @@ void HeuristicAlgorithm::Start()
 				if (!placementSelection.empty()) // P.size() = 0
 				{
 					// Make the placement indicted by P1
-					MakePlacementsIndicted();
+					PlacementSelection placement =  MakePlacementsIndicted(placementSelection);
 					//Update EMSs
-					UpdateEMS(emptyMaximalSpace);
+					UpdateEMS(emptyMaximalSpace, placement, container);
 					boxplaced = true;
 				}
 			}
@@ -85,22 +90,22 @@ void HeuristicAlgorithm::Start()
 		while (boxplaced == false && !m_CLS.empty()) // CLS != 0 and boxplaced = false
 		{
 			// Let EMS be the initial emplty space in CLS1 (first container in list)
-			Container emptyMaxSpace = GetFirstContainerInList();
+			Container firstContainer = GetFirstContainerInList();
 
 			// TODO: Can be optimize 
 			//OC = OC && CLS1(взяти спільне)
-			openedContainers = ConcatenateVectors(openedContainers, emptyMaxSpace);
+			openedContainers = ConcatenateVectors(openedContainers, firstContainer);
 
 			//CLS = CLS \ CLS1(викинути з CLS те що є у CLS1)
 
-			m_CLS = DifferentceVectors(m_CLS, emptyMaxSpace);
+			m_CLS = DifferentceVectors(m_CLS, firstContainer);
 			for (int i = 1; i < K_B && i < m_BPS.size(); i++) // i = 1 to kb and i < = BPS.size()
 			{
 			std::list<Box> boxOrientations = CreateAllBoxOrientation(m_BPS.at(i));
 				for (auto& boxOrientation : boxOrientations) // for all 6 orientation bo
 				{
 					PlacementSelection placement;
-					if (CanBoxBePlacedInSpace(boxOrientation, emptyMaxSpace, placement)) //if (Box BPSi can be placed in EMS with orientation b0)
+					if (CanBoxBePlacedInSpace(boxOrientation, firstContainer, placement)) //if (Box BPSi can be placed in EMS with orientation b0)
 					{
 						//Add this placement combination to P
 						placementSelection.push(placement);
@@ -110,9 +115,11 @@ void HeuristicAlgorithm::Start()
 			if (!placementSelection.empty()) // P.size() = 0
 			{
 				// Make the placement indicted by P1
-				MakePlacementsIndicted();
-				//Update EMSs
-				UpdateEMS(emptyMaximalSpace);
+				PlacementSelection placement = MakePlacementsIndicted(placementSelection);
+				//Update EMS // One container that was empty
+
+				std::vector<Container> emptyMaximalSpace;
+				UpdateEMS(emptyMaximalSpace, placement, firstContainer.GetIndex());
 				boxplaced = true;
 			}
 		}
@@ -126,8 +133,11 @@ void HeuristicAlgorithm::Start()
 	//return Packing Solution; ?????
 }
 
-void HeuristicAlgorithm::MakePlacementsIndicted()
+PlacementSelection HeuristicAlgorithm::MakePlacementsIndicted(std::queue<PlacementSelection>& placementsSelecion)
 {
+
+
+	return PlacementSelection();
 }
 
 std::list<Box> HeuristicAlgorithm::CreateAllBoxOrientation(int boxIndex)
@@ -234,7 +244,75 @@ std::vector<int> HeuristicAlgorithm::DifferentceVectors(const std::vector<int>& 
 	return resultVector;
 }
 
-void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces)
+void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
+{
+	UpdateExistedEMS(emptySpaces, placement);
+	CreateNewEMS(emptySpaces, placement);
+
+	UpdateContainer(emptySpaces, containerIndex);
+}
+
+void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement)
+{
+
+
+	int updatedSizeX = 0;
+	int updatedSizeY = 0;
+	int updatedSizeZ = 0;
+	int updatedCoordinationX = 0;
+	int updatedCoordinationY = 0;
+	int updatedCoordinationZ = 0;
+
+	bool updatedSpace = false;
+
+	for (const auto emptySpace : emptySpaces)
+	{
+		// Initialize values
+		updatedSizeX = emptySpace.GetLenghtX();
+		updatedSizeY = emptySpace.GetWidthY();
+		updatedSizeZ = emptySpace.GetHeightZ();
+		updatedCoordinationX = emptySpace.GetX();
+		updatedCoordinationY = emptySpace.GetY();
+		updatedCoordinationZ = emptySpace.GetZ();
+
+		if (emptySpace.GetX() < placement.size.lenght_x + placement.coordination.x)
+		{
+			updatedSizeX = emptySpace.GetLenghtX() - (placement.size.lenght_x + placement.coordination.x);
+			updatedCoordinationX = placement.size.lenght_x + placement.coordination.x;
+			updatedSpace = true;
+		}
+		if (emptySpace.GetY() < placement.size.width_y + placement.coordination.y)
+		{
+			updatedSizeY = emptySpace.GetWidthY() - (placement.size.width_y + placement.coordination.y);
+			updatedCoordinationY = placement.size.width_y + placement.coordination.y;
+			updatedSpace = true;
+		}
+		if (emptySpace.GetZ() < placement.size.height_z + placement.coordination.z)
+		{
+			updatedSizeY = emptySpace.GetHeightZ() - (placement.size.height_z + placement.coordination.z);
+			updatedCoordinationZ = placement.size.height_z + placement.coordination.z;
+			updatedSpace = true;
+		}
+
+		if (updatedSpace)
+		{
+			// Delete space and add new
+			// FindAndDeleteContainer
+			Container updatedEmptySpace
+			(updatedSizeX, updatedSizeY, updatedSizeZ,
+				updatedCoordinationX, updatedCoordinationY, updatedCoordinationZ);
+		}
+	}
+}
+
+void HeuristicAlgorithm::UpdateContainer(std::vector<Container>& emptySpaces, int containerIndex)
+{
+	PoolManager::GetInstance()->UpdateContainerEMS(emptySpaces, containerIndex);
+}
+
+void HeuristicAlgorithm::CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement)
 {
 
 }
+
+

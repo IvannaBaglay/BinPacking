@@ -21,8 +21,9 @@ public:
 	void InitializeDecreaseBoxIndexes();
 
 	const Box& GetBoxByIndex(int boxIndex);
-		const Container& GetContainerByIndex(int containerIndex);
+	const Container& GetContainerByIndex(int containerIndex);
 
+	void UpdateContainerEMS(std::vector<Container>& emptySpaces, int containerIndex);
 private:
 	static PoolManager* m_PoolManager;
 
