@@ -127,7 +127,7 @@ bool PoolManager::ParseContainers()
 
     for (auto container : containersInfo["containers"])
     {
-        m_Containers.push_back(Container(container));
+        m_Containers.push_back(std::move(Container(container)));
     }
 
     return result;

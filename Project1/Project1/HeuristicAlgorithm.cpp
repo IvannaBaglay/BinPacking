@@ -22,7 +22,7 @@ struct PlacementSelection
 		int z;
 	} coordination;
 
-	float placementsScore = 0.f;
+	int index = 0;
 };
 
 HeuristicAlgorithm::HeuristicAlgorithm(const std::vector<int>& bps, const std::vector<int>& cls)
@@ -47,10 +47,10 @@ void HeuristicAlgorithm::Start()
 		{
 			//Let EMS by empty maximal spaces in c
 
-			std::vector<Container> emptyMaximalSpace(GetContainer(container).GetEMS());
+			std::vector<Container> emptyMaximalSpace(GetContainer(container).GetEMS()); // Added copy function
 
 			int j = 0; // мабуть краще починати з 0 // in orifinal j = 1
-			while (j <= emptyMaximalSpace.size() && boxplaced == false)
+			while (j < emptyMaximalSpace.size() && boxplaced == false)
 			{
 				int k = j + K_E; // ???? For what I need K_E
 				while (j < k && j < emptyMaximalSpace.size()) // мабуть для С++ j < EMS.size()
@@ -78,6 +78,7 @@ void HeuristicAlgorithm::Start()
 					PlacementSelection placement =  MakePlacementsIndicted(placementSelection, emptyMaximalSpace.at(j));
 					//Update EMSs
 					UpdateEMS(emptyMaximalSpace, placement, container);
+					UpdateBPS(placement.index);
 					boxplaced = true;
 				}
 			}
@@ -90,22 +91,21 @@ void HeuristicAlgorithm::Start()
 		while (boxplaced == false && !m_CLS.empty()) // CLS != 0 and boxplaced = false
 		{
 			// Let EMS be the initial emplty space in CLS1 (first container in list)
-			Container firstContainer = GetFirstContainerInList();
+			int firstContainerIndex = GetFirstContainerInList().GetIndex();
 
 			// TODO: Can be optimize 
 			//OC = OC && CLS1(взяти спільне)
-			openedContainers = ConcatenateVectors(openedContainers, firstContainer);
-
+			openedContainers = ConcatenateVectors(openedContainers, firstContainerIndex);
 			//CLS = CLS \ CLS1(викинути з CLS те що є у CLS1)
 
-			m_CLS = DifferentceVectors(m_CLS, firstContainer);
-			for (int i = 1; i < K_B && i < m_BPS.size(); i++) // i = 1 to kb and i < = BPS.size()
+			m_CLS = DifferentceVectors(m_CLS, firstContainerIndex);
+			for (int i = 1; i < K_B && i < m_BPS.size(); i++) // i = 1 to kb and i < = BPS.size() ???????????  Why I need here K_b
 			{
 			std::list<Box> boxOrientations = CreateAllBoxOrientation(m_BPS.at(i));
 				for (auto& boxOrientation : boxOrientations) // for all 6 orientation bo
 				{
 					PlacementSelection placement;
-					if (CanBoxBePlacedInSpace(boxOrientation, firstContainer, placement)) //if (Box BPSi can be placed in EMS with orientation b0)
+					if (CanBoxBePlacedInSpace(boxOrientation, GetContainer(firstContainerIndex), placement)) //if (Box BPSi can be placed in EMS with orientation b0)
 					{
 						//Add this placement combination to P
 						placementSelection.push_back(placement);
@@ -115,11 +115,12 @@ void HeuristicAlgorithm::Start()
 			if (!placementSelection.empty()) // P.size() = 0
 			{
 				// Make the placement indicted by P1
-				PlacementSelection placement = MakePlacementsIndicted(placementSelection, firstContainer);
+				PlacementSelection placement = MakePlacementsIndicted(placementSelection, GetContainer(firstContainerIndex));
 				//Update EMS // One container that was empty
 
 				std::vector<Container> emptyMaximalSpace;
-				UpdateEMS(emptyMaximalSpace, placement, firstContainer.GetIndex());
+				UpdateEMS(emptyMaximalSpace, placement, firstContainerIndex);
+				UpdateBPS(placement.index);
 				boxplaced = true;
 			}
 		}
@@ -184,6 +185,8 @@ bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& 
 		placement.coordination.x = space.GetX();
 		placement.coordination.y = space.GetY();
 		placement.coordination.z = space.GetZ();
+
+		placement.index = box.GetIndex();
 	}
 
 	return result;
@@ -191,8 +194,7 @@ bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& 
 
 const Container& HeuristicAlgorithm::GetContainer(int containerIndex)
 {
-	int index = m_CLS.at(containerIndex);
-	return index <=0 ? Container() : PoolManager::GetInstance()->GetContainerByIndex(index);
+	return containerIndex <=0 ? Container() : PoolManager::GetInstance()->GetContainerByIndex(containerIndex);
 }
 
 const Container& HeuristicAlgorithm::GetFirstContainerInList()
@@ -215,28 +217,26 @@ std::vector<int> HeuristicAlgorithm::ConcatenateVectors(const std::vector<int>& 
 	return resultVector;
 }
 
-std::vector<int> HeuristicAlgorithm::ConcatenateVectors(const std::vector<int>& firstVector, const Container& container)
+std::vector<int> HeuristicAlgorithm::ConcatenateVectors(const std::vector<int>& firstVector, int containerIndex)
 {
-	int index = container.GetIndex();
 	std::vector<int>  resultVector(firstVector);
 
-	const auto iter = std::find_if(firstVector.cbegin(), firstVector.cend(), [&index](int openedIndex) { return openedIndex == index; });
+	const auto iter = std::find_if(resultVector.cbegin(), resultVector.cend(), [&containerIndex](int openedIndex) { return openedIndex == containerIndex; });
 
-	if (iter == firstVector.cend())
+	if (iter == resultVector.cend())
 	{
-		resultVector.push_back(index);
+		resultVector.push_back(containerIndex);
 	}
 
 	return resultVector;
 }
-std::vector<int> HeuristicAlgorithm::DifferentceVectors(const std::vector<int>& firstVector, const Container& container)
+std::vector<int> HeuristicAlgorithm::DifferentceVectors(const std::vector<int>& firstVector, int containerIndex)
 {
-	int index = container.GetIndex();
 	std::vector<int>  resultVector(firstVector);
 
-	const auto iter = std::find_if(firstVector.cbegin(), firstVector.cend(), [&index](int openedIndex) { return openedIndex == index; });
+	const auto iter = std::find_if(resultVector.cbegin(), resultVector.cend(), [&containerIndex](int openedIndex) { return openedIndex == containerIndex; });
 
-	if (iter != firstVector.cend())
+	if (iter != resultVector.cend())
 	{
 		resultVector.erase(iter);
 	}
@@ -317,20 +317,34 @@ void HeuristicAlgorithm::SortEMS(std::vector<Container>& emptySpaces)
 	});
 }
 
+void HeuristicAlgorithm::UpdateBPS(int boxIndex)
+{
+	const auto iter = std::find_if(m_BPS.begin(), m_BPS.end(), [&boxIndex](int index) { return index == boxIndex; });
+
+	if (iter != m_BPS.end())
+	{
+		m_BPS.erase(iter);
+	}
+}
+
 void HeuristicAlgorithm::CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
 {
-	Container openedContainer = GetContainer(containerIndex);
+	const Container& openedContainer = GetContainer(containerIndex);
+
+	int coordX = openedContainer.GetX();
+	int coordY = openedContainer.GetY();
+	int coordZ = openedContainer.GetZ();
 
 	Container EMS_X
-	(placement.coordination.x + placement.size.lenght_x, openedContainer.GetY(), openedContainer.GetZ(),
+	(placement.coordination.x + placement.size.lenght_x, coordY, coordZ,
 		openedContainer.GetLenghtX() - (placement.coordination.x + placement.size.lenght_x), openedContainer.GetWidthY(), openedContainer.GetHeightZ());
 
 	Container EMS_Y
-	(openedContainer.GetX(), placement.coordination.y + placement.size.width_y, openedContainer.GetZ(),
+	(coordX, placement.coordination.y + placement.size.width_y, coordZ,
 		openedContainer.GetLenghtX(), openedContainer.GetWidthY() - (placement.coordination.y + placement.size.width_y), openedContainer.GetHeightZ());
 
 	Container EMS_Z
-	(openedContainer.GetX(), openedContainer.GetY(), placement.coordination.z + placement.size.height_z ,
+	(coordX, coordY, placement.coordination.z + placement.size.height_z ,
 		openedContainer.GetLenghtX(), openedContainer.GetWidthY(), openedContainer.GetHeightZ() - (placement.coordination.z + placement.size.height_z));
 
 	emptySpaces.push_back(EMS_X);

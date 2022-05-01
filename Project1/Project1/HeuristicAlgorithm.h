@@ -24,14 +24,16 @@ private:
 	const Container& GetFirstContainerInList();
 
 	std::vector<int> ConcatenateVectors(const std::vector<int>& firstVector, const std::vector<int>& secondVector);
-	std::vector<int> ConcatenateVectors(const std::vector<int>& firstVector, const Container& container);
-	std::vector<int> DifferentceVectors(const std::vector<int>& firstVector, const Container& container);
+	std::vector<int> ConcatenateVectors(const std::vector<int>& firstVector, int containerIndex);
+	std::vector<int> DifferentceVectors(const std::vector<int>& firstVector, int containerIndex);
 
 	void UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement);
 	void CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void UpdateContainer(std::vector<Container>& emptySpaces, int containerIndex);
 	void SortEMS(std::vector<Container>& emptySpaces);
+
+	void UpdateBPS(int boxIndex);
 
 	PlacementSelection MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelection, const Container& emptySpace);
 
