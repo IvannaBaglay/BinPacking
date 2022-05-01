@@ -47,7 +47,9 @@ void HeuristicAlgorithm::Start()
 		{
 			//Let EMS by empty maximal spaces in c
 
-			std::vector<Container> emptyMaximalSpace(GetContainer(container).GetEMS()); // Added copy function
+			std::vector<Container> emptyMaximalSpace; // TODO: Added copy function 
+			CopyEmptySpacesFromContainer(emptyMaximalSpace, container);
+
 
 			int j = 0; // мабуть краще починати з 0 // in orifinal j = 1
 			while (j < emptyMaximalSpace.size() && boxplaced == false)
@@ -83,7 +85,7 @@ void HeuristicAlgorithm::Start()
 				}
 			}
 			if (boxplaced == true)
-			{
+			{ 
 				break;
 			}
 		}
@@ -148,6 +150,15 @@ PlacementSelection HeuristicAlgorithm::MakePlacementsIndicted(std::vector<Placem
 	return *placementsSelecion.begin();
 }
 
+void HeuristicAlgorithm::CopyEmptySpacesFromContainer(std::vector<Container>& emptySpaces, int containerIndex)
+{
+	const std::vector<Container>& EMSContainer = GetEMSContainer(containerIndex);
+
+	emptySpaces.clear();
+	emptySpaces.reserve(EMSContainer.size());
+	std::copy(EMSContainer.begin(), EMSContainer.end(), std::back_inserter(emptySpaces));
+}
+
 std::list<Box> HeuristicAlgorithm::CreateAllBoxOrientation(int boxIndex)
 {
 	const Box& box = PoolManager::GetInstance()->GetBoxByIndex(boxIndex);
@@ -194,7 +205,14 @@ bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& 
 
 const Container& HeuristicAlgorithm::GetContainer(int containerIndex)
 {
-	return containerIndex <=0 ? Container() : PoolManager::GetInstance()->GetContainerByIndex(containerIndex);
+	assert(containerIndex > 0, "Error Unknown index");
+	return PoolManager::GetInstance()->GetContainerByIndex(containerIndex);
+}
+
+const std::vector<Container>& HeuristicAlgorithm::GetEMSContainer(int containerIndex)
+{
+	assert(containerIndex > 0, "Error Unknown index");
+	return PoolManager::GetInstance()->GetContainerEMS(containerIndex);
 }
 
 const Container& HeuristicAlgorithm::GetFirstContainerInList()
@@ -304,7 +322,7 @@ void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, c
 	}
 }
 
-void HeuristicAlgorithm::UpdateContainer(std::vector<Container>& emptySpaces, int containerIndex)
+void HeuristicAlgorithm::UpdateContainer(const std::vector<Container>& emptySpaces, int containerIndex)
 {
 	PoolManager::GetInstance()->UpdateContainerEMS(emptySpaces, containerIndex);
 }

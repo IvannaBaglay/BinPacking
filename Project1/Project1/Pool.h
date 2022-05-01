@@ -23,7 +23,8 @@ public:
 	const Box& GetBoxByIndex(int boxIndex);
 	const Container& GetContainerByIndex(int containerIndex);
 
-	void UpdateContainerEMS(std::vector<Container>& emptySpaces, int containerIndex);
+	void UpdateContainerEMS(const std::vector<Container>& emptySpaces, int containerIndex);
+	const std::vector<Container>& GetContainerEMS(int containerIndex);
 private:
 	static PoolManager* m_PoolManager;
 

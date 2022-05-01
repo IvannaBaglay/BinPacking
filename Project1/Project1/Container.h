@@ -5,7 +5,7 @@ class Container
 {
 public:
 	Container() = default;
-	//Container(const Container& value);
+	Container(const Container& value);
 	Container(nlohmann::json containerInfo);
 	Container(int sizeX, int sizeY, int sizeZ, int x, int y, int z);
 	~Container() = default;

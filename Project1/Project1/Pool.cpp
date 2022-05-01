@@ -82,7 +82,7 @@ const Container& PoolManager::GetContainerByIndex(int containerIndex)
     return *founded;
 }
 
-void PoolManager::UpdateContainerEMS(std::vector<Container>& emptySpaces, int containerIndex)
+void PoolManager::UpdateContainerEMS(const std::vector<Container>& emptySpaces, int containerIndex)
 {
     auto founded = std::find_if(m_Containers.begin(), m_Containers.end(),
         [&containerIndex](const Container& container)
@@ -97,6 +97,23 @@ void PoolManager::UpdateContainerEMS(std::vector<Container>& emptySpaces, int co
     }
 
     founded->SetEMS(emptySpaces);
+}
+
+const std::vector<Container>& PoolManager::GetContainerEMS(int containerIndex)
+{
+    auto founded = std::find_if(m_Containers.begin(), m_Containers.end(),
+        [&containerIndex](const Container& container)
+    {
+        return container.GetIndex() == containerIndex;
+    }
+    );
+
+    if (founded == m_Containers.end())
+    {
+        assert("Don't found box");
+    }
+
+    return founded->GetEMS();
 }
 
 bool PoolManager::ParseBoxes()
