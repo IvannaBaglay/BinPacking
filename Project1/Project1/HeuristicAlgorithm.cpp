@@ -247,7 +247,7 @@ std::vector<int> HeuristicAlgorithm::DifferentceVectors(const std::vector<int>& 
 void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
 {
 	UpdateExistedEMS(emptySpaces, placement);
-	CreateNewEMS(emptySpaces, placement);
+	CreateNewEMS(emptySpaces, placement, containerIndex);
 
 	UpdateContainer(emptySpaces, containerIndex);
 }
@@ -310,9 +310,25 @@ void HeuristicAlgorithm::UpdateContainer(std::vector<Container>& emptySpaces, in
 	PoolManager::GetInstance()->UpdateContainerEMS(emptySpaces, containerIndex);
 }
 
-void HeuristicAlgorithm::CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement)
+void HeuristicAlgorithm::CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
 {
+	Container openedContainer = GetContainer(containerIndex);
 
+	Container EMS_X
+	(placement.coordination.x + placement.size.lenght_x, openedContainer.GetY(), openedContainer.GetZ(),
+		openedContainer.GetLenghtX() - (placement.coordination.x + placement.size.lenght_x), openedContainer.GetWidthY(), openedContainer.GetHeightZ());
+
+	Container EMS_Y
+	(openedContainer.GetX(), placement.coordination.y + placement.size.width_y, openedContainer.GetZ(),
+		openedContainer.GetLenghtX(), openedContainer.GetWidthY() - (placement.coordination.y + placement.size.width_y), openedContainer.GetHeightZ());
+
+	Container EMS_Z
+	(openedContainer.GetX(), openedContainer.GetY(), placement.coordination.z + placement.size.height_z ,
+		openedContainer.GetLenghtX(), openedContainer.GetWidthY(), openedContainer.GetHeightZ() - (placement.coordination.z + placement.size.height_z));
+
+	emptySpaces.push_back(EMS_X);
+	emptySpaces.push_back(EMS_Y);
+	emptySpaces.push_back(EMS_Z);
 }
 
 

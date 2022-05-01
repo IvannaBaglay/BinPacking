@@ -32,7 +32,7 @@ private:
 
 	void UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement);
-	void CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement);
+	void CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void UpdateContainer(std::vector<Container>& emptySpaces, int containerIndex);
 
 	PlacementSelection MakePlacementsIndicted(std::queue<PlacementSelection>& placementsSelection);
