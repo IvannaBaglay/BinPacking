@@ -2,6 +2,7 @@
 #include <Constants.h>
 #include <Pool.h>
 #include <HeuristicAlgorithm.h>
+#include <ResultWritter.h>
 
 #include <iterator>
 
@@ -18,13 +19,25 @@ GeneticAlgorithm::~GeneticAlgorithm()
 
 void GeneticAlgorithm::Start()
 {
-    for (auto& individual : m_Individuals)
+    for (int generationIndex = 0; generationIndex < GENERATIONS; generationIndex++)
     {
-        HeuristicAlgorithm hAlgorith(individual.GetBPS(), individual.GetCLS());
+        int individualIndex = 0;
+        for (auto& individual : m_Individuals)
+        {
+            HeuristicAlgorithm hAlgorith(individual.GetBPS(), individual.GetCLS());
 
-        int fitness = hAlgorith.Start();
+            int fitness = hAlgorith.Start();
 
-        individual.SetFitness(fitness);
+            individual.SetFitness(fitness);
+
+
+            ResultWritter::GetInstanse()->WriteResult(generationIndex, individualIndex, fitness, fitness != INVALID_FITNESS?true:false);
+
+            individualIndex++;
+        }
+        Selection();
+        Evaluation();
+        CrossoverAndMutation();
     }
 }
 

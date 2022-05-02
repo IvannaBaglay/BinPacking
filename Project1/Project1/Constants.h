@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-const int GENERATIONS = 100;
+const int GENERATIONS = 2;
 const int POPULATION = 2;
 const int POP_E = 10;
 const float PROB_C = 0.75f;

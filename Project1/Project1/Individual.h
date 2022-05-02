@@ -11,8 +11,6 @@ public:
 	Individual() = default;
 	~Individual() = default;
 
-	void PreInitialization();
-
 	Individual Mate(Individual parent2);
 
 	const std::vector<int>& GetBPS() const { return m_Chromosome.GetS1(); }
@@ -22,9 +20,8 @@ public:
 	void SetFitness(int fitness) { m_Fitness = fitness; }
 
 private:
-	//float CalculateFitness(); ??
 
 	Chromosome m_Chromosome;
 	float m_Fitness;
-
+	int m_Index;
 };

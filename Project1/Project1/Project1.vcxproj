@@ -148,6 +148,7 @@
     <ClCompile Include="GeneticAlgorithm.cpp" />
     <ClCompile Include="HeuristicAlgorithm.cpp" />
     <ClCompile Include="Individual.cpp" />
+    <ClCompile Include="ResultWritter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pool.cpp" />
   </ItemGroup>
@@ -159,7 +160,9 @@
     <ClInclude Include="GeneticAlgorithm.h" />
     <ClInclude Include="HeuristicAlgorithm.h" />
     <ClInclude Include="Individual.h" />
+    <ClInclude Include="PlacementSelection.h" />
     <ClInclude Include="Pool.h" />
+    <ClInclude Include="ResultWritter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

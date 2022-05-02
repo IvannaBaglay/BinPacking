@@ -3,27 +3,13 @@
 #include <Constants.h>
 #include <Box.h>
 #include <Pool.h>
+#include <PlacementSelection.h>
+#include <ResultWritter.h>
 
 #include <queue>
 #include <iterator>
 
-struct PlacementSelection
-{
-	struct Size
-	{
-		int lenght_x;
-		int width_y;
-		int height_z;
-	} size;
-	struct Coordination
-	{
-		int x;
-		int y;
-		int z;
-	} coordination;
 
-	int index = 0;
-};
 
 HeuristicAlgorithm::HeuristicAlgorithm(const std::vector<int>& bps, const std::vector<int>& cls)
 	: m_BPS(bps), m_CLS(cls)
@@ -276,6 +262,8 @@ std::vector<int> HeuristicAlgorithm::DifferentceVectors(const std::vector<int>& 
 
 void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
 {
+	ResultWritter::GetInstanse()->SaveNewValue(placement);
+
 	UpdateExistedEMS(emptySpaces, placement);
 	CreateNewEMS(emptySpaces, placement, containerIndex);
 	UpdateContainer(emptySpaces, containerIndex);
