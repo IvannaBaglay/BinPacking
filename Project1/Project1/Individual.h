@@ -18,6 +18,9 @@ public:
 	const std::vector<int>& GetBPS() const { return m_Chromosome.GetS1(); }
 	const std::vector<int>& GetCLS() const { return m_Chromosome.GetS2(); }
 
+	int GetFitness() const { return m_Fitness; }
+	void SetFitness(int fitness) { m_Fitness = fitness; }
+
 private:
 	//float CalculateFitness(); ??
 

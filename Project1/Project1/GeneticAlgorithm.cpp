@@ -18,11 +18,13 @@ GeneticAlgorithm::~GeneticAlgorithm()
 
 void GeneticAlgorithm::Start()
 {
-    for (const auto& individual : m_Individuals)
+    for (auto& individual : m_Individuals)
     {
         HeuristicAlgorithm hAlgorith(individual.GetBPS(), individual.GetCLS());
 
-        hAlgorith.Start();
+        int fitness = hAlgorith.Start();
+
+        individual.SetFitness(fitness);
     }
 }
 

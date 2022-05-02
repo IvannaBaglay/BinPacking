@@ -9,5 +9,6 @@ const float PROB_T = 0.85f;
 const float P_M = 0.01; // 
 const int K_B = 3; //
 const int K_E = 3; // 
+const int INVALID_FITNESS = -1;// Individuals with this value will be deleted 
 
 #endif

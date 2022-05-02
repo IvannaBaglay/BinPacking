@@ -20,6 +20,8 @@ public:
 
 	int GetIndex() const { return m_Index; }
 
+	int GetVolume() const { return m_LenghtX * m_WidthY * m_HeightZ; }
+
 	const std::vector<Container>& GetEMS() const {	return m_EmptySpaces; }
 	void SetEMS(const std::vector<Container>& newEMS);
 private:

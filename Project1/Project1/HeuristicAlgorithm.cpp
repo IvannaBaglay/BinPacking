@@ -30,9 +30,9 @@ HeuristicAlgorithm::HeuristicAlgorithm(const std::vector<int>& bps, const std::v
 {
 }
 
-void HeuristicAlgorithm::Start()
+int HeuristicAlgorithm::Start()
 {
-
+	int fitness = 0;
 	//Let OC be the list of Opened Containers 
 	//int OC = 0;
 	std::vector<int> openedContainers; // is empty on the first iteration
@@ -81,6 +81,8 @@ void HeuristicAlgorithm::Start()
 					//Update EMSs
 					UpdateEMS(emptyMaximalSpace, placement, container);
 					UpdateBPS(placement.index);
+
+					fitness = CalculateFitness(emptyMaximalSpace);
 					boxplaced = true;
 				}
 			}
@@ -123,17 +125,19 @@ void HeuristicAlgorithm::Start()
 				std::vector<Container> emptyMaximalSpace;
 				UpdateEMS(emptyMaximalSpace, placement, firstContainerIndex);
 				UpdateBPS(placement.index);
+
+				fitness = CalculateFitness(emptyMaximalSpace);
 				boxplaced = true;
 			}
 		}
 		if (boxplaced = false)
 		{
-			return; // return nullptr;
+			return INVALID_FITNESS;
 		}
 
 	}
 
-	//return Packing Solution; ?????
+	return fitness;
 }
 
 PlacementSelection HeuristicAlgorithm::MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelecion)
@@ -155,6 +159,16 @@ void HeuristicAlgorithm::CopyEmptySpacesFromContainer(std::vector<Container>& em
 	emptySpaces.clear();
 	emptySpaces.reserve(EMSContainer.size());
 	std::copy(EMSContainer.begin(), EMSContainer.end(), std::back_inserter(emptySpaces));
+}
+
+int HeuristicAlgorithm::CalculateFitness(const std::vector<Container>& emptySpaces)
+{
+	int result = 0;
+	for (const auto& space : emptySpaces)
+	{
+		result = space.GetVolume();
+	}
+	return result;
 }
 
 std::list<Box> HeuristicAlgorithm::CreateAllBoxOrientation(int boxIndex)
@@ -352,16 +366,18 @@ void HeuristicAlgorithm::CreateNewEMS(std::vector<Container>& emptySpaces, const
 	int coordZ = openedContainer.GetZ();
 
 	Container EMS_X
-	(placement.coordination.x + placement.size.lenght_x, coordY, coordZ,
-		openedContainer.GetLenghtX() - (placement.coordination.x + placement.size.lenght_x), openedContainer.GetWidthY(), openedContainer.GetHeightZ());
+	(openedContainer.GetLenghtX() - (placement.coordination.x + placement.size.lenght_x), openedContainer.GetWidthY(), openedContainer.GetHeightZ(),
+		placement.coordination.x + placement.size.lenght_x, coordY, coordZ
+		);
 
 	Container EMS_Y
-	(coordX, placement.coordination.y + placement.size.width_y, coordZ,
-		openedContainer.GetLenghtX(), openedContainer.GetWidthY() - (placement.coordination.y + placement.size.width_y), openedContainer.GetHeightZ());
+	(openedContainer.GetLenghtX(), openedContainer.GetWidthY() - (placement.coordination.y + placement.size.width_y), openedContainer.GetHeightZ(),
+		coordX, placement.coordination.y + placement.size.width_y, coordZ
+		);
 
 	Container EMS_Z
-	(coordX, coordY, placement.coordination.z + placement.size.height_z ,
-		openedContainer.GetLenghtX(), openedContainer.GetWidthY(), openedContainer.GetHeightZ() - (placement.coordination.z + placement.size.height_z));
+	(openedContainer.GetLenghtX(), openedContainer.GetWidthY(), openedContainer.GetHeightZ() - (placement.coordination.z + placement.size.height_z),
+		coordX, coordY, placement.coordination.z + placement.size.height_z );
 
 	emptySpaces.push_back(EMS_X);
 	emptySpaces.push_back(EMS_Y);

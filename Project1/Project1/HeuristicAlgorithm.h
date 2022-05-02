@@ -13,7 +13,7 @@ public:
 	HeuristicAlgorithm(const std::vector<int>& bps, const std::vector<int>& cls);
 	~HeuristicAlgorithm() = default;
 
-	void Start();
+	int Start();
 
 
 
@@ -39,6 +39,8 @@ private:
 	PlacementSelection MakePlacementsIndicted(std::vector<PlacementSelection>& placementsSelection);
 
 	void CopyEmptySpacesFromContainer(std::vector<Container>& emptySpaces, int containerIndex);
+
+	int CalculateFitness(const std::vector<Container>& emptySpaces); // return accumulation of empty space volumes
 
 	std::vector<int> m_BPS;
 	std::vector<int> m_CLS;
