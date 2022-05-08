@@ -40,13 +40,14 @@ void GeneticAlgorithm::Start()
         {
             HeuristicAlgorithm hAlgorith(individual.GetBPS(), individual.GetCLS());
 
-            int fitness = 0;//hAlgorith.Start();
+            int fitness = hAlgorith.Start();
 
-            individual.SetFitness(rand() % 100 + 1);
+            //individual.SetFitness(rand() % 100 + 1);
+            individual.SetFitness(fitness);
 
 
             ResultWritter::GetInstanse()->WriteResult(generationIndex, individualIndex, fitness, fitness != INVALID_FITNESS?true:false);
-
+            ResultWritter::GetInstanse()->CleanResult();
             individualIndex++;
         }
 
@@ -54,7 +55,7 @@ void GeneticAlgorithm::Start()
         Selection(parents);
         CrossoverAndMutation(parents);
 
-        ResultWritter::GetInstanse()->CleanResult();
+       
     }
 }
 
@@ -77,7 +78,7 @@ inline void GeneticAlgorithm::Selection(std::vector<Individual>& parents)
             for (int m = 1; m < K_TOURNAMENT; m++)
             {
                 const Individual& individual2 = m_Individuals[m];
-                if (individual1.GetFitness() < individual2.GetFitness())
+                if (individual1.GetFitness() > individual2.GetFitness())
                 {
                     individualBetter = individual2;
                 }
@@ -88,9 +89,8 @@ inline void GeneticAlgorithm::Selection(std::vector<Individual>& parents)
 
 
     //Tested averange value
-    //int value1 = std::accumulate(m_Individuals.begin(), m_Individuals.end(), 0, [](int i, const Individual& ind) { return ind.GetFitness() + i; }) / m_Individuals.size();
-    //int value2 = std::accumulate(parents.begin(), parents.end(), 0, [](int i, const Individual& ind) { return ind.GetFitness() + i; }) / parents.size();
-
+    int value1 = std::accumulate(m_Individuals.begin(), m_Individuals.end(), 0, [](int i, const Individual& ind) { return ind.GetFitness() + i; }) / m_Individuals.size();
+    int value2 = std::accumulate(parents.begin(), parents.end(), 0, [](int i, const Individual& ind) { return ind.GetFitness() + i; }) / parents.size();
 }
 
 inline void GeneticAlgorithm::CrossoverAndMutation(const std::vector<Individual>& parents)

@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-const int GENERATIONS = 2;
+const int GENERATIONS = 10;
 const int POPULATION = 100;
 const int POP_E = 10;
 const int K_GROUP = 10;
