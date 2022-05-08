@@ -35,6 +35,18 @@ bool PoolManager::Initialize()
     return result;
 }
 
+std::vector<int> PoolManager::GetIndexesContainers()
+{
+    std::vector<int> indexes;
+
+    for (const auto& container : m_Containers)
+    {
+        indexes.push_back(container.GetIndex());
+    }
+
+    return indexes;
+}
+
 void PoolManager::InitializeDecreaseBoxIndexes()
 {
     std::sort(m_Boxes.begin(), m_Boxes.end(), [](Box& box1, Box& box2)

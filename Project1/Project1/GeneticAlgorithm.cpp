@@ -38,6 +38,8 @@ void GeneticAlgorithm::Start()
         Selection();
         Evaluation();
         CrossoverAndMutation();
+
+        ResultWritter::GetInstanse()->CleanResult();
     }
 }
 

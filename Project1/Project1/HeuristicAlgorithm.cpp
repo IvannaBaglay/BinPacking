@@ -50,7 +50,7 @@ int HeuristicAlgorithm::Start()
 						for (auto& boxOrientation : boxOrientations)
 						{
 							PlacementSelection placement;
-							if (CanBoxBePlacedInSpace(boxOrientation, emptyMaximalSpace.at(j), placement)) // box BPSi can be placed in EMS with orientation b0 then 
+							if (CanBoxBePlacedInSpace(boxOrientation, emptyMaximalSpace.at(j), placement, container)) // box BPSi can be placed in EMS with orientation b0 then 
 							{
 								//Add this placement combination to P
 								placementSelection.push_back(placement);
@@ -95,7 +95,7 @@ int HeuristicAlgorithm::Start()
 				for (auto& boxOrientation : boxOrientations) // for all 6 orientation bo
 				{
 					PlacementSelection placement;
-					if (CanBoxBePlacedInSpace(boxOrientation, GetContainer(firstContainerIndex), placement)) //if (Box BPSi can be placed in EMS with orientation b0)
+					if (CanBoxBePlacedInSpace(boxOrientation, GetContainer(firstContainerIndex), placement, firstContainerIndex)) //if (Box BPSi can be placed in EMS with orientation b0)
 					{
 						//Add this placement combination to P
 						placementSelection.push_back(placement);
@@ -176,14 +176,14 @@ std::list<Box> HeuristicAlgorithm::CreateAllBoxOrientation(int boxIndex)
 	};
 }
 
-bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& space, PlacementSelection& placement)
+bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& space, PlacementSelection& placement, int containerIndex)
 {
-	bool result;
+	bool result = true;
 
 	// Check placement
-	result = box.GetSizeX() + space.GetX() <= space.GetLenghtX();
-	result = box.GetSizeY() + space.GetY() <= space.GetWidthY();
-	result = box.GetSizeZ() + space.GetZ() <= space.GetHeightZ();
+	result &= box.GetSizeX() <= space.GetLenghtX();
+	result &= box.GetSizeY() <= space.GetWidthY();
+	result &= box.GetSizeZ() <= space.GetHeightZ();
 
 	if (result) // save if OK
 	{
@@ -196,6 +196,7 @@ bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& 
 		placement.coordination.z = space.GetZ();
 
 		placement.index = box.GetIndex();
+		placement.containerIndex = containerIndex;
 	}
 
 	return result;
@@ -271,8 +272,6 @@ void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const Pl
 
 void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement)
 {
-
-
 	int updatedSizeX = 0;
 	int updatedSizeY = 0;
 	int updatedSizeZ = 0;

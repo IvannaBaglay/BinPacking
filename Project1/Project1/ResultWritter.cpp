@@ -45,6 +45,7 @@ void ResultWritter::WriteResult(int generationNumber, int individualIndex, int f
     for (const auto& placement : m_Result)
     {
         jsonValue["index"] = placement.index;
+        jsonValue["container"] = placement.containerIndex;
         jsonValue["coordination"] = { placement.coordination.x, placement.coordination.y, placement.coordination.z };
         jsonValue["size"] = { placement.size.lenght_x, placement.size.width_y, placement.size.height_z };
 

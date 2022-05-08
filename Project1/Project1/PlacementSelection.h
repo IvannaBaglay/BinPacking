@@ -15,4 +15,5 @@ struct PlacementSelection
 	} coordination;
 
 	int index = 0;
+	int containerIndex = 0;
 };

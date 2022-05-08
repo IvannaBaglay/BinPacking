@@ -18,6 +18,7 @@ public:
 	int GetContainerNumber() const { return m_Containers.size(); }
 
 	const std::vector<int>& GetIndexesSortDecreaseBoxes() { return m_DescreaseBoxIndexes; };
+	std::vector<int> GetIndexesContainers();
 	void InitializeDecreaseBoxIndexes();
 
 	const Box& GetBoxByIndex(int boxIndex);

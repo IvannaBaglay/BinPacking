@@ -19,7 +19,7 @@ public:
 
 private:
 	std::list<Box> CreateAllBoxOrientation(int boxIndex);
-	bool CanBoxBePlacedInSpace(const Box& box, const Container& space, PlacementSelection& placement);
+	bool CanBoxBePlacedInSpace(const Box& box, const Container& space, PlacementSelection& placement, int containerIndex);
 	const Container& GetContainer(int containerIndex);
 	const std::vector<Container>& GetEMSContainer(int containerIndex);
 	const Container& GetFirstContainerInList();
