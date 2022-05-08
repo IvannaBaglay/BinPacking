@@ -18,7 +18,7 @@ private:
 	void CrossoverAndMutation();
 
 	// list of Individuals
-	std::list<Individual> m_Individuals;
+	std::vector<Individual> m_Individuals;
 
 };
 

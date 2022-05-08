@@ -323,7 +323,6 @@ void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, c
 
 		if (updatedSpace)
 		{
-			// FindAndDeleteContainer
 			emptySpace.UpdateMembers
 			(updatedSizeX, updatedSizeY, updatedSizeZ,
 				updatedCoordinationX, updatedCoordinationY, updatedCoordinationZ);
