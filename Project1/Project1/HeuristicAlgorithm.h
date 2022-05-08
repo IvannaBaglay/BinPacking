@@ -29,10 +29,11 @@ private:
 	std::vector<int> DifferentceVectors(const std::vector<int>& firstVector, int containerIndex);
 
 	void UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
-	void UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement);
+	void UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void CreateNewEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void UpdateContainer(const std::vector<Container>& emptySpaces, int containerIndex);
 	void SortEMS(std::vector<Container>& emptySpaces);
+	void DeleteEMS(std::vector<Container>& emptySpaces);
 
 	void UpdateBPS(int boxIndex);
 

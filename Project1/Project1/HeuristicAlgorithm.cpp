@@ -116,7 +116,7 @@ int HeuristicAlgorithm::Start()
 				boxplaced = true;
 			}
 		}
-		if (boxplaced = false)
+		if (boxplaced == false)
 		{
 			return INVALID_FITNESS;
 		}
@@ -265,12 +265,23 @@ void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const Pl
 {
 	ResultWritter::GetInstanse()->SaveNewValue(placement);
 
-	UpdateExistedEMS(emptySpaces, placement);
+
+
+	UpdateExistedEMS(emptySpaces, placement, containerIndex);
 	CreateNewEMS(emptySpaces, placement, containerIndex);
+
+	DeleteEMS(emptySpaces);
+
 	UpdateContainer(emptySpaces, containerIndex);
 }
 
-void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement)
+void HeuristicAlgorithm::DeleteEMS(std::vector<Container>& emptySpaces)
+{
+	auto noSpaceEnd = std::remove_if(emptySpaces.begin(), emptySpaces.end(), [](const Container& container) { return container.GetHeightZ() <= 0 || container.GetWidthY() <= 0 || container.GetLenghtX() <= 0; });
+	emptySpaces.erase(noSpaceEnd, emptySpaces.end());
+}
+
+void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
 {
 	int updatedSizeX = 0;
 	int updatedSizeY = 0;
@@ -281,7 +292,7 @@ void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, c
 
 	bool updatedSpace = false;
 
-	for (const auto emptySpace : emptySpaces)
+	for (auto& emptySpace : emptySpaces)
 	{
 		// Initialize values
 		updatedSizeX = emptySpace.GetLenghtX();
@@ -312,13 +323,13 @@ void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, c
 
 		if (updatedSpace)
 		{
-			// Delete space and add new
 			// FindAndDeleteContainer
-			Container updatedEmptySpace
+			emptySpace.UpdateMembers
 			(updatedSizeX, updatedSizeY, updatedSizeZ,
 				updatedCoordinationX, updatedCoordinationY, updatedCoordinationZ);
 		}
 	}
+	//Delete spaces that have one coordination <=0
 }
 
 void HeuristicAlgorithm::UpdateContainer(const std::vector<Container>& emptySpaces, int containerIndex)

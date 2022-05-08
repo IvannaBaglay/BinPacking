@@ -18,6 +18,8 @@ public:
 	int GetY() const { return m_Y; }
 	int GetZ() const { return m_Z; }
 
+	void UpdateMembers(int sizeX, int sizeY, int sizeZ, int x, int y, int z);
+
 	int GetIndex() const { return m_Index; }
 
 	int GetVolume() const { return m_LenghtX * m_WidthY * m_HeightZ; }

@@ -22,7 +22,9 @@ std::string ResultWritter::GenerateFileName(int generationNumber, int individual
     std::string individualNumberString ( "Individual" + std::to_string(individualIndex));
     std::string fitnessString( "Fitness" + std::to_string(fitness));
 
-    std::string succesfullString( "Succesfull" + successful ? "true" : "false");
+    std::string succesfullstr (successful ? "true" : "false");
+
+    std::string succesfullString("Succesfull" + succesfullstr);
 
    return generationNumberString + individualNumberString + fitnessString + succesfullString;
 }

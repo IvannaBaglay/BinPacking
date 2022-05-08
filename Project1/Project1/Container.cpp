@@ -34,6 +34,16 @@ Container::Container(int sizeX, int sizeY, int sizeZ, int x, int y, int z)
     m_EmptySpaces.push_back(*this);
 }
 
+void Container::UpdateMembers(int sizeX, int sizeY, int sizeZ, int x, int y, int z)
+{
+    m_LenghtX = sizeX;
+    m_WidthY = sizeY;
+    m_HeightZ = sizeZ;
+    m_X = x;
+    m_Y = y;
+    m_Z = z;
+}
+
 void Container::SetEMS(const std::vector<Container>& newEMS)
 {
     m_EmptySpaces.clear();
