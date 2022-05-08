@@ -9,9 +9,10 @@ class Individual
 {
 public:
 	Individual() = default;
+	Individual(const Chromosome& choromo);
 	~Individual() = default;
 
-	Individual Mate(Individual parent2);
+	Individual Mate(const Individual& parent2) const;
 
 	const std::vector<int>& GetBPS() const { return m_Chromosome.GetS1(); }
 	const std::vector<int>& GetCLS() const { return m_Chromosome.GetS2(); }
@@ -23,5 +24,4 @@ private:
 
 	Chromosome m_Chromosome;
 	float m_Fitness;
-	int m_Index;
 };

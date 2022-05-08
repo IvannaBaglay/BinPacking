@@ -17,9 +17,14 @@ std::vector<T> slice(std::vector<T>& v, int m, int n)
 
 GeneticAlgorithm::GeneticAlgorithm()
 {
-    std::list<Individual> tempList (POPULATION, Individual());
+    /*std::list<Individual> tempList (POPULATION, Individual());
+    std::copy(tempList.begin(), tempList.end(), std::back_inserter(m_Individuals));*/
 
-    std::copy(tempList.begin(), tempList.end(), std::back_inserter(m_Individuals));
+    for (int i = 0; i < POPULATION; i++)
+    {
+        m_Individuals.push_back(Individual());
+    }
+
 }
 
 GeneticAlgorithm::~GeneticAlgorithm()
@@ -35,7 +40,7 @@ void GeneticAlgorithm::Start()
         {
             HeuristicAlgorithm hAlgorith(individual.GetBPS(), individual.GetCLS());
 
-            int fitness = hAlgorith.Start();
+            int fitness = 0;//hAlgorith.Start();
 
             individual.SetFitness(rand() % 100 + 1);
 
@@ -44,9 +49,10 @@ void GeneticAlgorithm::Start()
 
             individualIndex++;
         }
-        Selection();
-        Evaluation();
-        CrossoverAndMutation();
+
+        std::vector<Individual> parents;
+        Selection(parents);
+        CrossoverAndMutation(parents);
 
         ResultWritter::GetInstanse()->CleanResult();
     }
@@ -57,23 +63,11 @@ inline void GeneticAlgorithm::Evaluation()
 
 }
 
-inline void GeneticAlgorithm::Selection()
+inline void GeneticAlgorithm::Selection(std::vector<Individual>& parents)
 {
-   // separate on k group
-    // 
     const int countInOneGroup = POPULATION / K_GROUP;
 
-    std::vector<Individual> parents; 
 
-    //for (int i = 0; i < POPULATION; i = i + countInOneGroup)
-    //{
-    //    std::vector<Individual> subVec = slice(m_Individuals, i, countInOneGroup);
-
-    //    parents.push_back(FindBetterIndividual(subVec));
-    //    // Find Better
-    //}
-
-    
     for (int i = 0; i < K_TOURNAMENT; i++)
     {
         Individual& individualBetter = m_Individuals[i];
@@ -99,17 +93,18 @@ inline void GeneticAlgorithm::Selection()
 
 }
 
-Individual GeneticAlgorithm::FindBetterIndividual(const std::vector<Individual>& individuals)
+inline void GeneticAlgorithm::CrossoverAndMutation(const std::vector<Individual>& parents)
 {
-    auto maxIndivid = std::max_element(individuals.begin(), individuals.end(), [](const Individual& ind1, const Individual& ind2) { return ind1.GetFitness() > ind2.GetFitness(); });
-
-    if (maxIndivid == individuals.end())
+    std::vector<Individual> children;
+    for (const auto& individ1 : parents)
     {
-        assert("Error iterator");
+        for (const auto& individ2 : parents)
+        {
+            children.push_back(individ1.Mate(individ2));
+        }
     }
-    return *maxIndivid;
+    m_Individuals.clear();
 
-}
-inline void GeneticAlgorithm::CrossoverAndMutation()
-{
+    std::copy(children.begin(), children.end(), std::back_inserter(m_Individuals));
+    
 }

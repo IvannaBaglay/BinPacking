@@ -15,6 +15,11 @@ Chromosome::Chromosome()
     PreInitialize();
 }
 
+Chromosome::Chromosome(const std::vector<int> s1, std::vector<int> s2)
+    : m_S1(std::move(s1)), m_S2(std::move(s2))
+{
+}
+
 void Chromosome::PreInitialize()
 {
     // S1 initialize box in decrease order
@@ -26,5 +31,5 @@ void Chromosome::PreInitialize()
     std::copy(containersIndex.begin(), containersIndex.end(), std::back_inserter(m_S2));
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    //std::shuffle(m_S2.begin(), m_S2.end(), std::default_random_engine(seed));
+    std::shuffle(m_S2.begin(), m_S2.end(), std::default_random_engine(seed));
 }

@@ -5,6 +5,7 @@ class Chromosome
 {
 public:
 	Chromosome();
+	Chromosome(const std::vector<int> s1, std::vector<int> s2);
 
 	// Add constructor with selection
 
