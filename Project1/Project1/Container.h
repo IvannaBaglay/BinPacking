@@ -1,5 +1,6 @@
 #pragma once
 #include <nlohmann/json.hpp>
+#include <ExtremePoint.h>
 
 class Container
 {
@@ -26,10 +27,15 @@ public:
 
 	const std::vector<Container>& GetEMS() const {	return m_EmptySpaces; }
 	void SetEMS(const std::vector<Container>& newEMS);
+
+	const std::vector<ExtremePoint>& GetEP() const { return m_ExtremePoints; }
+	void SetEP(const std::vector<ExtremePoint>& newEP);
 private:
 	void Initialize();
 
 	std::vector<Container> m_EmptySpaces;
+
+	std::vector<ExtremePoint> m_ExtremePoints;
 
 	int m_LenghtX = 0;
 	int m_WidthY = 0;

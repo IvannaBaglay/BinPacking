@@ -74,5 +74,8 @@
     <ClInclude Include="PlacementSelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExtremePoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

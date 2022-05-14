@@ -157,6 +157,7 @@
     <ClInclude Include="Chromosome.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Container.h" />
+    <ClInclude Include="ExtremePoint.h" />
     <ClInclude Include="GeneticAlgorithm.h" />
     <ClInclude Include="HeuristicAlgorithm.h" />
     <ClInclude Include="Individual.h" />

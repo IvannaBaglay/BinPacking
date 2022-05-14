@@ -26,6 +26,9 @@ public:
 
 	void UpdateContainerEMS(const std::vector<Container>& emptySpaces, int containerIndex);
 	const std::vector<Container>& GetContainerEMS(int containerIndex);
+	
+	void UpdateContainerEP(const std::vector<ExtremePoint>& extremePoint, int containerIndex);
+	const std::vector<ExtremePoint>& GetContainerEP(int containerIndex);
 private:
 	static PoolManager* m_PoolManager;
 

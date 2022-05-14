@@ -4,6 +4,7 @@
 #include <Box.h>
 #include <Pool.h>
 #include <PlacementSelection.h>
+#include <ExtremePoint.h>
 #include <ResultWritter.h>
 
 #include <queue>
@@ -36,6 +37,9 @@ int HeuristicAlgorithm::Start()
 			std::vector<Container> emptyMaximalSpace;
 			CopyEmptySpacesFromContainer(emptyMaximalSpace, container);
 
+			//Copy EP from container to temp vector
+			std::vector<ExtremePoint> extremePoints;
+			CopyExtremePointsFromContainer(extremePoints, container);
 
 			int j = 0; // мабуть краще починати з 0 // in orifinal j = 1
 			while (j < emptyMaximalSpace.size() && boxplaced == false)
@@ -55,6 +59,13 @@ int HeuristicAlgorithm::Start()
 								//Add this placement combination to P
 								placementSelection.push_back(placement);
 							}
+
+
+							//if (CanBoxBePlacedInEP(boxOrientation, extremePoint, placement, container)) //if (Box BPSi can be placed in EMS with orientation b0)
+							//{
+							//	//Add this placement combination to P
+							//	placementSelection.push_back(placement);
+							//}
 						}
 
 					}
@@ -67,6 +78,8 @@ int HeuristicAlgorithm::Start()
 					//Update EMSs
 					UpdateEMS(emptyMaximalSpace, placement, container);
 					UpdateBPS(placement.index);
+
+
 
 					fitness = CalculateFitness(emptyMaximalSpace);
 					boxplaced = true;
@@ -100,6 +113,16 @@ int HeuristicAlgorithm::Start()
 						//Add this placement combination to P
 						placementSelection.push_back(placement);
 					}
+
+
+					//if (CanBoxBePlacedInEP(boxOrientation, GetContainer(firstContainerIndex), placement, firstContainerIndex)) //if (Box BPSi can be placed in EMS with orientation b0)
+					//{
+					//	//Add this placement combination to P
+					//	placementSelection.push_back(placement);
+					//}
+
+
+
 				}
 			}
 			if (!placementSelection.empty()) // P.size() = 0
@@ -145,6 +168,15 @@ void HeuristicAlgorithm::CopyEmptySpacesFromContainer(std::vector<Container>& em
 	emptySpaces.clear();
 	emptySpaces.reserve(EMSContainer.size());
 	std::copy(EMSContainer.begin(), EMSContainer.end(), std::back_inserter(emptySpaces));
+}
+
+void HeuristicAlgorithm::CopyExtremePointsFromContainer(std::vector<ExtremePoint>& emptySpaces, int containerIndex)
+{
+	const std::vector<ExtremePoint>& EPContainer = GetEPContainer(containerIndex);
+
+	emptySpaces.clear();
+	emptySpaces.reserve(EPContainer.size());
+	std::copy(EPContainer.begin(), EPContainer.end(), std::back_inserter(emptySpaces));
 }
 
 int HeuristicAlgorithm::CalculateFitness(const std::vector<Container>& emptySpaces)
@@ -202,6 +234,39 @@ bool HeuristicAlgorithm::CanBoxBePlacedInSpace(const Box& box, const Container& 
 	return result;
 }
 
+bool HeuristicAlgorithm::CanBoxBePlacedInEP(const Box& box, const ExtremePoint& point, PlacementSelection& placement, int containerIndex)
+{
+	bool result = true;
+
+	const Container& openedContainer = GetContainer(containerIndex);
+
+	int containerSizeX = openedContainer.GetLenghtX();
+	int containerSizeY = openedContainer.GetWidthY();
+	int containerSizeZ = openedContainer.GetHeightZ();
+
+
+	// Check placement
+	result &= point.X_Coord + box.GetSizeX() <= containerSizeX;
+	result &= point.Y_Coord + box.GetSizeY() <= containerSizeY;
+	result &= point.Z_Coord + box.GetSizeZ() <= containerSizeZ;
+
+	if (result) // save if OK
+	{
+		placement.size.lenght_x = box.GetSizeX();
+		placement.size.width_y = box.GetSizeY();
+		placement.size.height_z = box.GetSizeZ();
+
+		placement.coordination.x = point.X_Coord;
+		placement.coordination.y = point.Y_Coord;
+		placement.coordination.z = point.Z_Coord;
+
+		placement.index = box.GetIndex();
+		placement.containerIndex = containerIndex;
+	}
+
+	return result;
+}
+
 const Container& HeuristicAlgorithm::GetContainer(int containerIndex)
 {
 	assert(containerIndex > 0, "Error Unknown index");
@@ -212,6 +277,12 @@ const std::vector<Container>& HeuristicAlgorithm::GetEMSContainer(int containerI
 {
 	assert(containerIndex > 0, "Error Unknown index");
 	return PoolManager::GetInstance()->GetContainerEMS(containerIndex);
+}
+
+const std::vector<ExtremePoint>& HeuristicAlgorithm::GetEPContainer(int containerIndex)
+{
+	assert(containerIndex > 0, "Error Unknown index");
+	return PoolManager::GetInstance()->GetContainerEP(containerIndex);
 }
 
 const Container& HeuristicAlgorithm::GetFirstContainerInList()
@@ -259,6 +330,31 @@ std::vector<int> HeuristicAlgorithm::DifferentceVectors(const std::vector<int>& 
 	}
 
 	return resultVector;
+}
+
+void HeuristicAlgorithm::UpdateEP(std::vector<ExtremePoint>& extremePoints, const PlacementSelection& placement, int containerIndex)
+{
+	ResultWritter::GetInstanse()->SaveNewValue(placement);
+
+
+	UpdateExistedEP(extremePoints, placement, containerIndex);
+	CreateNewEP(extremePoints, placement, containerIndex);
+
+	DeleteEP(extremePoints);
+
+	UpdateContainer(extremePoints, containerIndex);
+}
+
+void HeuristicAlgorithm::UpdateExistedEP(std::vector<ExtremePoint>& emptySpaces, const PlacementSelection& placement, int containerIndex)
+{
+}
+
+void HeuristicAlgorithm::CreateNewEP(std::vector<ExtremePoint>& emptySpaces, const PlacementSelection& placement, int containerIndex)
+{
+}
+
+void HeuristicAlgorithm::DeleteEP(std::vector<ExtremePoint>& emptySpaces)
+{
 }
 
 void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
@@ -334,6 +430,11 @@ void HeuristicAlgorithm::UpdateExistedEMS(std::vector<Container>& emptySpaces, c
 void HeuristicAlgorithm::UpdateContainer(const std::vector<Container>& emptySpaces, int containerIndex)
 {
 	PoolManager::GetInstance()->UpdateContainerEMS(emptySpaces, containerIndex);
+}
+
+void HeuristicAlgorithm::UpdateContainer(const std::vector<ExtremePoint>& extremePoint, int containerIndex)
+{
+	PoolManager::GetInstance()->UpdateContainerEP(extremePoint, containerIndex);
 }
 
 void HeuristicAlgorithm::SortEMS(std::vector<Container>& emptySpaces)

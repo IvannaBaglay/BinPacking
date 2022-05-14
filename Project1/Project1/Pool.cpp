@@ -1,6 +1,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <Pool.h>
+#include <ExtremePoint.h>
 
 namespace
 {
@@ -126,6 +127,41 @@ const std::vector<Container>& PoolManager::GetContainerEMS(int containerIndex)
     }
 
     return founded->GetEMS();
+}
+
+
+void PoolManager::UpdateContainerEP(const std::vector<ExtremePoint>& extremePoint, int containerIndex)
+{
+    auto founded = std::find_if(m_Containers.begin(), m_Containers.end(),
+        [&containerIndex](const Container& container)
+    {
+        return container.GetIndex() == containerIndex;
+    }
+    );
+
+    if (founded == m_Containers.end())
+    {
+        assert("Don't found box");
+    }
+
+    founded->SetEP(extremePoint);
+}
+
+const std::vector<ExtremePoint>& PoolManager::GetContainerEP(int containerIndex)
+{
+    auto founded = std::find_if(m_Containers.begin(), m_Containers.end(),
+        [&containerIndex](const Container& container)
+    {
+        return container.GetIndex() == containerIndex;
+    }
+    );
+
+    if (founded == m_Containers.end())
+    {
+        assert("Don't found box");
+    }
+
+    return founded->GetEP();
 }
 
 bool PoolManager::ParseBoxes()

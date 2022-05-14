@@ -49,3 +49,9 @@ void Container::SetEMS(const std::vector<Container>& newEMS)
     m_EmptySpaces.clear();
     std::copy(newEMS.cbegin(), newEMS.cend(), std::back_inserter(m_EmptySpaces));
 }
+
+void Container::SetEP(const std::vector<ExtremePoint>& newEP)
+{
+    m_ExtremePoints.clear();
+    std::copy(newEP.cbegin(), newEP.cend(), std::back_inserter(m_ExtremePoints));
+}
