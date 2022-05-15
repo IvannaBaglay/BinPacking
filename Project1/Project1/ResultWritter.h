@@ -14,6 +14,7 @@ public:
     void SaveNewValue(const PlacementSelection& placement);
     void CleanResult() { m_Result.clear(); }
     void WriteResult(int generationNumber, int individualIndex, int fitness, bool succesfull);
+    const std::vector<PlacementSelection> GetPlacementsBoxes() const { return m_Result; }
 
 private:
     std::string  GenerateFileName(int generationNumber, int individualIndex, int fitness, bool succesfull);

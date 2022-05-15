@@ -336,25 +336,111 @@ void HeuristicAlgorithm::UpdateEP(std::vector<ExtremePoint>& extremePoints, cons
 {
 	ResultWritter::GetInstanse()->SaveNewValue(placement);
 
-
-	UpdateExistedEP(extremePoints, placement, containerIndex);
 	CreateNewEP(extremePoints, placement, containerIndex);
+	UpdateExistedEP(extremePoints, placement, containerIndex);
 
 	DeleteEP(extremePoints);
 
 	UpdateContainer(extremePoints, containerIndex);
 }
 
-void HeuristicAlgorithm::UpdateExistedEP(std::vector<ExtremePoint>& emptySpaces, const PlacementSelection& placement, int containerIndex)
+void HeuristicAlgorithm::UpdateExistedEP(std::vector<ExtremePoint>& extremePoints, const PlacementSelection& placement, int containerIndex)
 {
+	for (auto& point : extremePoints)
+	{
+		if (point.Z_Coord >= placement.coordination.z && point.Z_Coord < placement.coordination.z + placement.size.height_z)
+		{
+			if (point.X_Coord >= placement.coordination.x /*&& ISOnSide(placement, Y)*/)
+			{
+				point.X_Coord = std::min(point.X_Coord, placement.coordination.x - point.X_Coord);
+			}
+			if (point.Y_Coord >= placement.coordination.y /*&& ISOnSide(placement, X)*/)
+			{
+				point.Y_Coord = std::min(point.Y_Coord, placement.coordination.y - point.Y_Coord);
+			}
+		}
+		if (point.Z_Coord <= placement.coordination.z  /*&& ISOnSide(placement, XY)*/)
+		{
+			point.Z_Coord = std::min(point.Z_Coord, placement.coordination.z - point.Z_Coord);
+		}
+		
+	}
 }
 
-void HeuristicAlgorithm::CreateNewEP(std::vector<ExtremePoint>& emptySpaces, const PlacementSelection& placement, int containerIndex)
+void HeuristicAlgorithm::CreateNewEP(std::vector<ExtremePoint>& extremePoints, const PlacementSelection& placement, int containerIndex)
 {
+	const std::vector<PlacementSelection>& placementBoxes = ResultWritter::GetInstanse()->GetPlacementsBoxes();
+
+	std::array<int, 6> maxBound{ -1, -1, -1, -1, -1, -1 };
+
+	std::vector<ExtremePoint> newEP;
+
+	for (const auto box : placementBoxes)
+	{
+		if (CanBeProjected(box, ExtremePoint(placement.coordination.x, placement.coordination.y, placement.coordination.z), Projections::Y_x)
+			&& (box.coordination.x + box.size.lenght_x > maxBound[static_cast<int>(Projections::Y_x)]))
+		{
+			newEP.push_back(
+				ExtremePoint(box.coordination.x + box.size.lenght_x,
+					placement.coordination.y + placement.size.width_y,
+					placement.coordination.z));
+			maxBound[static_cast<int>(Projections::Y_x)] = box.coordination.x + box.size.lenght_x;
+		}
+		if (CanBeProjected(box, ExtremePoint(placement.coordination.x, placement.coordination.y, placement.coordination.z), Projections::Y_z)
+			&& (box.coordination.z + box.size.height_z > maxBound[static_cast<int>(Projections::Y_z)]))
+		{
+			newEP.push_back(
+				ExtremePoint(placement.coordination.x,
+					placement.coordination.y + placement.size.width_y,
+					box.coordination.z + box.size.height_z));
+			maxBound[static_cast<int>(Projections::Y_z)] = box.coordination.z + box.size.height_z;
+		}
+		if (CanBeProjected(box, ExtremePoint(placement.coordination.x, placement.coordination.y, placement.coordination.z), Projections::X_y)
+			&& (box.coordination.y + box.size.width_y > maxBound[static_cast<int>(Projections::X_y)]))
+		{
+			newEP.push_back(
+				ExtremePoint(placement.coordination.x + placement.size.lenght_x,
+					box.coordination.y + box.size.width_y,
+					placement.coordination.z));
+			maxBound[static_cast<int>(Projections::X_y)] = box.coordination.y + box.size.width_y;
+		}
+		if (CanBeProjected(box, ExtremePoint(placement.coordination.x, placement.coordination.y, placement.coordination.z), Projections::X_z)
+			&& (box.coordination.z + box.size.height_z > maxBound[static_cast<int>(Projections::X_z)]))
+		{
+			newEP.push_back(
+				ExtremePoint(placement.coordination.x + placement.size.lenght_x,
+					placement.coordination.y,
+					box.coordination.z + box.size.height_z));
+			maxBound[static_cast<int>(Projections::X_z)] = box.coordination.z + box.size.height_z;
+		}
+		if (CanBeProjected(box, ExtremePoint(placement.coordination.x, placement.coordination.y, placement.coordination.z), Projections::Z_x)
+			&& (box.coordination.x + box.size.lenght_x > maxBound[static_cast<int>(Projections::Z_x)]))
+		{
+			newEP.push_back(
+				ExtremePoint(box.coordination.x + box.size.lenght_x,
+					placement.coordination.y,
+					placement.coordination.z + placement.size.height_z));
+			maxBound[static_cast<int>(Projections::Z_x)] = box.coordination.x + box.size.lenght_x;
+		}
+		if (CanBeProjected(box, ExtremePoint(placement.coordination.x, placement.coordination.y, placement.coordination.z), Projections::Z_y)
+			&& (box.coordination.y + box.size.width_y > maxBound[static_cast<int>(Projections::Z_y)]))
+		{
+			newEP.push_back(
+				ExtremePoint(placement.coordination.x,
+					box.coordination.y + box.size.width_y,
+					placement.coordination.z + placement.size.height_z));
+			maxBound[static_cast<int>(Projections::Z_y)] = box.coordination.y + box.size.width_y;
+		}
+
+	}
+
+	std::copy(newEP.cbegin(), newEP.cend(), std::back_inserter(extremePoints));
 }
 
-void HeuristicAlgorithm::DeleteEP(std::vector<ExtremePoint>& emptySpaces)
+void HeuristicAlgorithm::DeleteEP(std::vector<ExtremePoint>& extremePoints)
 {
+	sort(extremePoints.begin(), extremePoints.end());
+	extremePoints.erase(unique(extremePoints.begin(), extremePoints.end()), extremePoints.end());
 }
 
 void HeuristicAlgorithm::UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex)
@@ -435,6 +521,25 @@ void HeuristicAlgorithm::UpdateContainer(const std::vector<Container>& emptySpac
 void HeuristicAlgorithm::UpdateContainer(const std::vector<ExtremePoint>& extremePoint, int containerIndex)
 {
 	PoolManager::GetInstance()->UpdateContainerEP(extremePoint, containerIndex);
+}
+
+bool HeuristicAlgorithm::CanBeProjected(const PlacementSelection& placement, const ExtremePoint& extremePoints, Projections projections)
+{
+	bool result = false;
+	switch (projections)
+		
+	{
+		case Projections::Y_x: result = extremePoints.X_Coord >= placement.coordination.x + placement.size.lenght_x; break;
+		case Projections::Y_z: result = extremePoints.Z_Coord >= placement.coordination.z + placement.size.height_z; break;
+		case Projections::X_y: result = extremePoints.Y_Coord >= placement.coordination.y + placement.size.width_y; break;
+		case Projections::X_z: result = extremePoints.Z_Coord >= placement.coordination.z + placement.size.height_z; break;
+		case Projections::Z_x: result = extremePoints.X_Coord >= placement.coordination.x + placement.size.lenght_x; break;
+		case Projections::Z_y: result = extremePoints.Y_Coord >= placement.coordination.y + placement.size.width_y; break;
+	default:
+		result = false;
+		break;
+	}
+	return result;
 }
 
 void HeuristicAlgorithm::SortEMS(std::vector<Container>& emptySpaces)

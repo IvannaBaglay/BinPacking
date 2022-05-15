@@ -38,6 +38,7 @@ private:
 	void CreateNewEP(std::vector<ExtremePoint>& emptySpaces, const PlacementSelection& placement, int containerIndex);
 	void DeleteEP(std::vector<ExtremePoint>& emptySpaces);
 	void UpdateContainer(const std::vector<ExtremePoint>& emptySpaces, int containerIndex);
+	bool CanBeProjected(const PlacementSelection& placement, const ExtremePoint& extremePoints, Projections projections);
 
 	// For EMS rule
 	void UpdateEMS(std::vector<Container>& emptySpaces, const PlacementSelection& placement, int containerIndex);
