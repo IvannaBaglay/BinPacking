@@ -38,8 +38,8 @@ int HeuristicAlgorithm::Start()
 			CopyEmptySpacesFromContainer(emptyMaximalSpace, container);
 
 			//Copy EP from container to temp vector
-			std::vector<ExtremePoint> extremePoints;
-			CopyExtremePointsFromContainer(extremePoints, container);
+			/*std::vector<ExtremePoint> extremePoints;
+			CopyExtremePointsFromContainer(extremePoints, container);*/
 
 			int j = 0; // мабуть краще починати з 0 // in orifinal j = 1
 			while (j < emptyMaximalSpace.size() && boxplaced == false)
@@ -439,7 +439,7 @@ void HeuristicAlgorithm::CreateNewEP(std::vector<ExtremePoint>& extremePoints, c
 
 void HeuristicAlgorithm::DeleteEP(std::vector<ExtremePoint>& extremePoints)
 {
-	sort(extremePoints.begin(), extremePoints.end());
+	sort(extremePoints.begin(), extremePoints.end(), [](ExtremePoint& ep1, ExtremePoint& ep2) {return ep1.X_Coord > ep2.X_Coord; });
 	extremePoints.erase(unique(extremePoints.begin(), extremePoints.end()), extremePoints.end());
 }
 
