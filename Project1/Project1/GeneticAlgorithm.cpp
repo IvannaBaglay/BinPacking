@@ -35,6 +35,7 @@ void GeneticAlgorithm::Start()
 {
     for (int generationIndex = 0; generationIndex < GENERATIONS; generationIndex++)
     {
+        ResultWritter::GetInstanse()->SaveStartAlgTime();
         int individualIndex = 0;
         for (auto& individual : m_Individuals)
         {
@@ -54,8 +55,7 @@ void GeneticAlgorithm::Start()
         std::vector<Individual> parents;
         Selection(parents);
         CrossoverAndMutation(parents);
-
-       
+        ResultWritter::GetInstanse()->SaveEndAlgTime();
     }
 }
 

@@ -27,6 +27,20 @@ ResultWritter* ResultWritter::GetInstanse()
     return m_ResultWritter;
 }
 
+void ResultWritter::SaveTime(std::chrono::system_clock::time_point& time)
+{
+    time = std::chrono::system_clock::now();
+}
+
+std::string ResultWritter::GeneralTime()
+{
+    std::chrono::duration<double> time = m_EndTime - m_StartTime;
+
+    std::string result = std::to_string(time.count());
+
+    return result;
+}
+
 std::string ResultWritter::GenerateFileName(int generationNumber, int individualIndex, int fitness, bool successful)
 {
     std::string generationNumberString ( "Generation" + std::to_string(generationNumber));
